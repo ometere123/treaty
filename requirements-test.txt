@@ -1,0 +1,2 @@
+# Direct-mode test dependency. Intentionally no frontend dependencies.
+genlayer-test @ git+https://github.com/genlayerlabs/genlayer-testing-suite@v0.29.2
