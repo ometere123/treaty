@@ -51,7 +51,8 @@ def test_create_policy_publishes_immutable_version(direct_vm, direct_deploy, dir
     policy_id = contract.create_policy("Buyer", "agent-service-v1", A_CONSTRAINTS)
     policy = contract.get_policy(policy_id)
     version = contract.get_policy_version(policy_id, 1)
-    assert policy["owner"].lower() == str(direct_alice).lower()
+    expected_owner = "0x" + direct_alice.hex()
+    assert policy["owner"].lower() == expected_owner.lower()
     assert policy["active_version"] == 1
     assert policy["domain_key"] == "agent-service-v1"
     assert len(version["constraints"]) == 3

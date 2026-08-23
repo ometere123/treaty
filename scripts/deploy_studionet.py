@@ -15,9 +15,6 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "contracts" / "treaty.py"
 PREFLIGHT = ROOT / "scripts" / "preflight.py"
-STUDIONET_RPC = "https://studio.genlayer.com/api"
-
-
 def run(command: list[str]) -> None:
     print("+", " ".join(command), flush=True)
     completed = subprocess.run(command, cwd=ROOT, check=False)
@@ -33,7 +30,10 @@ def main() -> int:
 
     run([sys.executable, str(PREFLIGHT)])
     run([cli, "account", "show"])
-    run([cli, "deploy", "--contract", str(CONTRACT), "--rpc", STUDIONET_RPC])
+    # Select the built-in network so the CLI also loads StudioNet's consensus
+    # contract metadata and finality polling configuration.
+    run([cli, "network", "set", "studionet"])
+    run([cli, "deploy", "--contract", str(CONTRACT)])
     return 0
 
 

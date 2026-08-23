@@ -404,10 +404,13 @@ genvm-lint check contracts/treaty.py
 
 Treaty has no constructor arguments.
 
+The verified StudioNet deployment is [`0x3bBC68Fb2863EF1a362298d6d6941df1506418BC`](docs/DEPLOYMENT.md). The deployment receipt is status `0x1` with GenVM execution result `SUCCESS` and consensus result `MAJORITY_AGREE`.
+
 With the GenLayer CLI:
 
 ```bash
-genlayer deploy --contract contracts/treaty.py --rpc https://studio.genlayer.com/api
+genlayer network set studionet
+genlayer deploy --contract contracts/treaty.py
 ```
 
 Or:
