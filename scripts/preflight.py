@@ -26,7 +26,11 @@ REQUIRED_SOURCE_MARKERS = [
     "class Treaty(gl.Contract)",
     "class ITreaty",
     "gl.vm.run_nondet_unsafe",
-    "assess_overlap_once",
+    "assess_semantics_once",
+    "build_validation_prompt",
+    "class DomainVersion",
+    "create_domain",
+    "semantic_units",
     "assessment_cache",
     "canonical_pair",
     "policy_hash",
@@ -85,12 +89,16 @@ def main() -> int:
             fail(f"unexpected money-moving surface: {forbidden}")
 
     checks += 1
-    if source.count("gl.nondet.exec_prompt") != 1:
-        fail("expected exactly one semantic LLM call site")
+    if source.count("gl.nondet.exec_prompt") != 2:
+        fail("expected exactly two bounded semantic LLM call sites (leader and source-grounded validator)")
 
     checks += 1
     if source.count("gl.vm.run_nondet_unsafe") != 1:
         fail("expected exactly one custom consensus block")
+
+    checks += 1
+    if "payload[:" in source or "source[:" in source:
+        fail("semantic source must never be silently truncated")
 
     class_names = {node.name for node in ast.walk(tree) if isinstance(node, ast.ClassDef)}
     checks += 1

@@ -1,5 +1,13 @@
 # Treaty — Intelligent Contract Submission Notes
 
+## Reviewer summary
+
+Treaty is a reusable GenLayer primitive for protocol-level compatibility and bilateral consent between independent autonomous systems. A versioned domain vocabulary closes topic-key evasion; immutable policy versions are grouped into semantic units; GenLayer consensus produces a bounded compatibility receipt with a global cross-group safety result; and only the two policy owners can activate a treaty.
+
+GenLayer matters because natural-language satisfiability cannot be fully reduced to ordinary deterministic contract logic, while neither policy owner should unilaterally interpret both sides. Treaty is not a thin LLM wrapper: the contract owns domain/version hashes, policy ownership, cache identity, source pinning, assessment state, expiry, consent, rejection, and supersession. The LLM only evaluates bounded compatibility claims.
+
+The exact adversarial proof is in `tests/direct/test_treaty_hardening.py`: malformed, reordered, invented-group, invented-witness, prompt-injection, validator-rejection, and payload-boundary cases are covered. Local proof is 40 Direct Mode tests, 45 deterministic preflight checks, and a passing GenVM lint. Live lifecycle evidence is recorded in `docs/DEPLOYMENT.md`; only claims backed by finalized receipts belong there.
+
 ## Category
 
 Standalone GenLayer Intelligent Contract.

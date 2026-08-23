@@ -1,104 +1,49 @@
 # Consensus Design
 
-## Scope
+Treaty uses GenLayer consensus for one bounded semantic operation: deciding whether two immutable policy versions can coexist across a versioned domain vocabulary.
 
-Treaty uses GenLayer consensus for exactly one semantic operation:
+## Immutable source boundary
 
-> Given two hard constraints on the same topic, is there clearly at least one behavior that satisfies both?
+Each policy pins a `domain_id`, `domain_version`, and `domain_definition_hash`. The domain version defines canonical topics, exactly one semantic group per topic, and bounded group dependencies. Policy statements are untrusted data. A later domain or policy version cannot mutate an earlier assessment.
 
-Everything else is deterministic.
+Before consensus, deterministic code groups all clauses by their canonical semantic group. This prevents topic-key evasion: `identity.pii` and `identity.email` enter the same semantic unit when the domain says both belong to `identity-data`. The complete policy sets and dependency list also enter a bounded global consistency check, so contradictions that span groups cannot silently become unilateral clauses.
 
-## Why exact-topic pairing is deterministic
+## Leader proposal
 
-Policy authors provide machine topic keys such as:
+The leader receives the complete source and returns only bounded JSON:
 
-```text
-price.usd
-data.pii
-refund.failure
-delivery.seconds
+```json
+{"groups":[{"group":"identity-data","relation":"CONFLICT","a_indices":[0],"b_indices":[0]}],"overall":"INCOMPATIBLE"}
 ```
 
-Treaty never asks a model to discover which topics match.
-
-It sorts both policies by exact topic key and computes unilateral A topics, unilateral B topics, and overlapping topics. Only overlapping pairs enter nondeterministic execution.
-
-## Leader output
-
-For every overlapping topic, the leader must return exactly one of:
-
-```text
-COMPATIBLE
-CONFLICT
-AMBIGUOUS
-```
-
-No prose is consensus-critical.
+Allowed group relations are `UNILATERAL_A`, `UNILATERAL_B`, `COMPATIBLE`, `CONFLICT`, and `AMBIGUOUS`. The global result is only `COMPATIBLE`, `CONFLICT`, or `AMBIGUOUS`. Witnesses are source clause indices, never generated terms or prose.
 
 ## Validator behavior
 
-The validator does not evaluate JSON shape alone. It independently calls the same semantic satisfiability function against the same immutable inputs.
+Treaty uses `gl.vm.run_nondet_unsafe`, which is the appropriate custom boundary for non-deterministic semantic work. The validator first checks the proposal’s bounded shape, canonical group order, finite enums, and witness index bounds. It then receives the immutable source and the leader proposal and asks a source-grounded validation prompt whether that exact proposal is conservative and supported by the source.
 
-A proposal is accepted only when:
+This follows current GenLayer guidance: validators must independently verify substance, not only formatting. A source-grounded validator is appropriate here because the leader’s bounded output is a claim about fixed source clauses; the validator does not need to generate a competing classification. The validator rejects invented groups, missing groups, invalid witnesses, unsupported labels, compromise terms, and proposals that make a conflict/ambiguity claim without source-grounded witnesses.
 
-1. proposed topics exactly match expected topics
-2. order is exact
-3. every proposed relation is valid
-4. independent validator output is valid
-5. every independent relation matches the proposed relation
+## Deterministic final state
 
-This is implemented through `gl.vm.run_nondet_unsafe`.
-
-## Failure behavior
-
-Malformed LLM output raises inside nondeterministic execution and cannot settle into state.
-
-Validator exceptions return disagreement.
-
-If models cannot converge on a clearly bounded relation, the transaction should not achieve consensus rather than silently writing weaker state. At the semantic level, the prompt also provides `AMBIGUOUS` as the safe output when the policy text itself cannot be resolved.
-
-## Deterministic aggregation
+The model cannot choose state transitions directly. Deterministic code applies:
 
 ```text
-any CONFLICT  -> assessment INCOMPATIBLE
-else
-any AMBIGUOUS -> assessment AMBIGUOUS
-else
-COMPATIBLE
+any group CONFLICT or global CONFLICT  -> INCOMPATIBLE
+else any group AMBIGUOUS or global AMBIGUOUS -> AMBIGUOUS
+else                                     -> COMPATIBLE
 ```
 
-No model chooses the final assessment status.
+Conflict dominates ambiguity. Only `COMPATIBLE` assessments can be proposed as treaties. No model output can create negotiated terms; treaty terms are always the original clauses from the pinned policy versions.
 
-## Why unilateral constraints are compatible
+## Failure behavior and bounds
 
-The Treaty policy model defines every listed clause as a hard restriction and absence of a topic as no extra restriction from that side.
-
-Therefore:
-
-```text
-A: delivery <= 600 seconds
-B: no delivery topic
-```
-
-is not interpreted as B disagreeing with the limit. The unilateral clause remains visible and authoritative in `get_treaty_terms`.
-
-## Consensus does not equal consent
-
-A compatible semantic assessment is not an agreement.
-
-`propose_treaty` creates a deterministic proposal referencing the compatible assessment. Only actual policy owners can ratify. Both owner flags must become true before the state transition to `ACTIVE`.
-
-This separation prevents an LLM quorum from creating contractual consent.
+Malformed leader output, validator exceptions, invalid witnesses, or validator disagreement cannot settle state. Source size is checked before nondeterministic execution and is rejected when it exceeds the bounded prompt budget. Treaty never slices or silently truncates semantic source material.
 
 ## Cache safety
 
-Assessments are cached by an order-independent hash containing:
+The assessment cache key includes both policy IDs, versions, and immutable policy definition hashes. The assessment additionally stores both domain references and the domain hash. Reversed policy input returns the same receipt; any new policy or domain version produces a new identity.
 
-- policy A ID
-- policy A version
-- policy A definition hash
-- policy B ID
-- policy B version
-- policy B definition hash
+## Consent is separate
 
-Because versions are immutable, a cached assessment cannot silently drift when either owner publishes a later version. The new version creates a new pair hash and therefore needs a new semantic assessment.
+Consensus establishes compatibility only. A compatible assessment becomes `PROPOSED`; the two independent policy owners must ratify separately before deterministic code creates an `ACTIVE` treaty.

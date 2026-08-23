@@ -96,7 +96,7 @@ share one assessment cache entry.
 
 For topics that appear in only one policy, Treaty deterministically records a unilateral hard constraint. Absence of a topic means "no additional restriction from this policy"; it is not treated as an implied permission.
 
-For overlapping topics, the leader performs a bounded semantic satisfiability judgment and validators independently repeat that same judgment.
+The leader proposes bounded semantic-group relations and a global result. The validator receives the same immutable domain and policy source plus that proposal and source-groundedly validates it; it does not merely check JSON shape or silently regenerate an arbitrary second answer.
 
 The assessment becomes:
 
@@ -181,11 +181,11 @@ immutable policy A:vN
 immutable policy B:vM
           |
           v
-deterministic exact-topic alignment
+immutable versioned domain vocabulary
           |
-          +---- topic only in A -> UNILATERAL_A
+          +---- canonical semantic-group alignment
           |
-          +---- topic only in B -> UNILATERAL_B
+          +---- global cross-group consistency pass
           |
           +---- topic in both
                     |
@@ -196,7 +196,7 @@ deterministic exact-topic alignment
        COMPATIBLE / CONFLICT / AMBIGUOUS
                     |
                     v
-       validators independently re-derive
+       source-grounded validator checks
                     |
           agree ----+---- disagree
             |               |
@@ -216,7 +216,7 @@ Only relation codes are consensus-critical. Free-form model reasoning is deliber
 ```text
 owner
 name
-domain_key
+domain_id + domain_version + domain_definition_hash
 active_version
 status
 created_at
@@ -241,6 +241,7 @@ policy_a_hash
 policy_b_hash
 pair_hash
 status
+global_relation
 results[]
 created_at
 resolved_at
@@ -316,7 +317,9 @@ Treaty itself does not move funds.
 ## Public write methods
 
 ```text
-create_policy(name, domain_key, constraints_json)
+create_domain(name, definition_json)
+publish_domain_version(domain_id, definition_json)
+create_policy(name, domain_id, domain_version, constraints_json)
 publish_version(policy_id, constraints_json)
 pause_policy(policy_id, paused)
 
@@ -333,6 +336,8 @@ refresh_expiry(treaty_id)
 
 ```text
 get_policy
+get_domain
+get_domain_version
 get_policy_version
 get_assessment
 get_cached_assessment
