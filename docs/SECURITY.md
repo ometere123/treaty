@@ -24,6 +24,8 @@ An assessment stores both hashes and rechecks them before semantic resolution. A
 - only the policy owner may pause or unpause
 - only one of the two policy owners may open an assessment
 - policies in one assessment must have different owners
+- both underlying policies must be active for a new treaty proposal
+- both underlying policies must still be active when the second party ratifies
 - only either treaty party may propose
 - only either treaty party may ratify or reject
 
@@ -33,7 +35,7 @@ Treaty proposals start with the proposer side ratified.
 
 The second side remains false until the other owner explicitly calls `ratify_treaty`.
 
-No semantic consensus output can write either owner consent flag.
+No semantic consensus output can write either owner consent flag. A paused policy also blocks a new proposal or the remaining ratification, so a historical compatibility receipt cannot be used to manufacture fresh consent after a party has paused its policy.
 
 ## Supersession
 
