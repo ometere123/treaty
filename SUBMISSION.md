@@ -81,6 +81,7 @@ This makes compromise invention impossible at the storage layer.
 - same owner cannot manufacture both sides
 - only policy owners can open assessments
 - only compatible assessments can be proposed
+- paused underlying policies block new proposals and ratification
 - proposer auto-ratifies only their own side
 - second owner must ratify independently
 - either owner may reject before activation
@@ -129,6 +130,7 @@ treaty.is_treaty_active(treaty_id, expected_agreement_hash)
 10. Bob ratifies successor.
 11. Show parent becomes `SUPERSEDED` and successor becomes `ACTIVE`.
 12. Run the validator-disagreement direct test to prove the validator is not a format check.
+13. Pause one policy and show that historical compatibility remains queryable while fresh proposal/ratification is blocked.
 
 ## Deployment
 
