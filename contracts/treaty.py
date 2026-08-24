@@ -339,13 +339,16 @@ def parse_constraints_json(raw: str) -> list[dict]:
 
 
 def parse_domain_definition(raw: str) -> dict:
-    text = str(raw).strip()
-    if len(text) == 0 or len(text) > MAX_CONSTRAINTS_JSON_LEN:
-        raise gl.vm.UserError(f"{ERR_EXPECTED}: domain definition is too large")
-    try:
-        parsed = json.loads(text)
-    except Exception:
-        raise gl.vm.UserError(f"{ERR_EXPECTED}: domain definition must be valid JSON")
+    if isinstance(raw, dict):
+        parsed = raw
+    else:
+        text = str(raw).strip()
+        if len(text) == 0 or len(text) > MAX_CONSTRAINTS_JSON_LEN:
+            raise gl.vm.UserError(f"{ERR_EXPECTED}: domain definition is too large")
+        try:
+            parsed = json.loads(text)
+        except Exception:
+            raise gl.vm.UserError(f"{ERR_EXPECTED}: domain definition must be valid JSON")
     if not isinstance(parsed, dict):
         raise gl.vm.UserError(f"{ERR_EXPECTED}: domain definition must be an object")
     topics = parsed.get("topics")
