@@ -1,12 +1,21 @@
 # Final StudioNet Deployment Evidence
 
-- Final repository commit: `87b679dffea13640e75d23b52a6392b817724504`
+- Repository HEAD at the start of this evidence-only cleanup: `dc7cf7cbb6592b498c9a5fc88310812b97e3ac71`
 - Deployed source commit: `87b679dffea13640e75d23b52a6392b817724504`
+- The commits after `87b679dffea13640e75d23b52a6392b817724504` are documentation/evidence-only and do not change `contracts/treaty.py`; no redeployment is required for those edits.
 - Network: StudioNet
 - Contract: `0x4f3710ea791458aBe1Fe1cE5D0bbBCc0CBdf098A`
 - Deployer: `0xB5EcD6dDa36B370aca4af5E2005d8E2Ae89c6db2`
 - Deployment tx: `0xa3ca4b5b7fbd0570dd028a2b702f61e46524af986a2acf8953926cb36409b47c`
 - Deployment status: `FINALIZED / SUCCESS / MAJORITY_AGREE`
+
+## Verification status
+
+- Local Direct Mode: `45 passed, 0 failed`
+- Deterministic preflight: `45/45`
+- GenVM lint: `PASS`
+- GitHub Actions CI: `PASS` (run `32726494808`)
+- GitHub Actions Direct Mode runtime: the job collected 45 tests but was blocked before assertions because the upstream `genvm-universal` v0.3.0-rc7 artifact returned HTTP 404. The workflow's artifact guard reports that infrastructure condition and exits successfully. This is **not** claimed as a Direct Mode test pass; the actual passing Direct Mode result above is the local run.
 
 ## Lifecycle receipts
 
