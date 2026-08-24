@@ -1,11 +1,18 @@
 {
   "network": "studionet",
-  "final_repository_commit": "87b679dffea13640e75d23b52a6392b817724504",
   "deployed_source_commit": "87b679dffea13640e75d23b52a6392b817724504",
   "contract_address": "0x4f3710ea791458aBe1Fe1cE5D0bbBCc0CBdf098A",
   "deployer": "0xB5EcD6dDa36B370aca4af5E2005d8E2Ae89c6db2",
   "deployment": {"tx": "0xa3ca4b5b7fbd0570dd028a2b702f61e46524af986a2acf8953926cb36409b47c", "status": "FINALIZED", "execution": "SUCCESS", "consensus": "MAJORITY_AGREE"},
-  "tooling": {"direct_mode": "45 passed, 0 failed", "preflight": "45/45", "genvm_lint": "PASS", "ci_run": "https://github.com/ometere123/treaty/actions/runs/32724825257", "ci_status": "PASS", "ci_direct_runtime_behavior": "executed successfully"},
+  "tooling": {
+    "local_direct_mode": "45 passed, 0 failed",
+    "preflight": "45/45",
+    "genvm_lint": "PASS",
+    "ci_run": "https://github.com/ometere123/treaty/actions/runs/32726494808",
+    "ci_status": "PASS",
+    "ci_direct_runtime_assertions_executed": false,
+    "ci_direct_runtime_behavior": "45 tests were collected, then the GitHub Actions Direct Mode runtime was blocked before assertions by an upstream genvm-universal v0.3.0-rc7 HTTP 404. The workflow artifact guard reported this infrastructure condition and exited successfully; this is not a Direct Mode test pass."
+  },
   "accounts": {"alice": "0xB5EcD6dDa36B370aca4af5E2005d8E2Ae89c6db2", "bob": "0xA7EeAE0E93793e3146Cb14b0700251B8b0ebadfb"},
   "compatible": {"open_tx": "0x0b2f68f04bf5603fbe21fc2930dfcd8dca305a891d3e3f6e71d9d746be8b6b23", "resolve_tx": "0xbffcecef7e0e4e0180a59dde2a47ca12c2b0e6ff48ec6001b72644e3ea00f0ae", "status": "FINALIZED / SUCCESS / MAJORITY_AGREE", "result": "COMPATIBLE", "assessment_id": 1},
   "incompatible": {"open_tx": "0x48219711ef5b7494322ef1b4caed2e89a3bc7df48685e963ff4d08127d6955a9", "resolve_tx": "0xe1e2f3849754053745cccc1cd9dc8186b3c3b1626d7b4b4d0281e18e275154a7", "status": "FINALIZED / SUCCESS / MAJORITY_AGREE", "result": "INCOMPATIBLE", "assessment_id": 2},
