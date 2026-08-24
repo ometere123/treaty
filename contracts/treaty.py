@@ -348,7 +348,15 @@ def parse_domain_definition(raw: str) -> dict:
         try:
             parsed = json.loads(text)
         except Exception:
-            raise gl.vm.UserError(f"{ERR_EXPECTED}: domain definition must be valid JSON")
+            try:
+                parsed = json.loads(text.replace("'", '"'))
+            except Exception:
+                raise gl.vm.UserError(f"{ERR_EXPECTED}: domain definition must be valid JSON")
+        if isinstance(parsed, str):
+            try:
+                parsed = json.loads(parsed)
+            except Exception:
+                raise gl.vm.UserError(f"{ERR_EXPECTED}: domain definition must be valid JSON")
     if not isinstance(parsed, dict):
         raise gl.vm.UserError(f"{ERR_EXPECTED}: domain definition must be an object")
     topics = parsed.get("topics")
