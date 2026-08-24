@@ -302,15 +302,28 @@ def domain_version_key(domain_id: int, version: int) -> str:
 
 
 def parse_constraints_json(raw: str) -> list[dict]:
-    text = str(raw).strip()
-    if len(text) == 0 or len(text) > MAX_CONSTRAINTS_JSON_LEN:
-        raise gl.vm.UserError(
-            f"{ERR_EXPECTED}: constraints_json must be 1..{MAX_CONSTRAINTS_JSON_LEN} chars"
-        )
-    try:
-        parsed = json.loads(text)
-    except Exception:
-        raise gl.vm.UserError(f"{ERR_EXPECTED}: constraints_json must be valid JSON")
+    if isinstance(raw, list):
+        parsed = raw
+    else:
+        text = str(raw).strip()
+        if text.startswith("b'") and text.endswith("'"):
+            text = text[2:-1]
+        if len(text) == 0 or len(text) > MAX_CONSTRAINTS_JSON_LEN:
+            raise gl.vm.UserError(
+                f"{ERR_EXPECTED}: constraints_json must be 1..{MAX_CONSTRAINTS_JSON_LEN} chars"
+            )
+        try:
+            parsed = json.loads(text)
+        except Exception:
+            try:
+                parsed = json.loads(text.replace("'", '"'))
+            except Exception:
+                raise gl.vm.UserError(f"{ERR_EXPECTED}: constraints_json must be valid JSON")
+        if isinstance(parsed, str):
+            try:
+                parsed = json.loads(parsed)
+            except Exception:
+                raise gl.vm.UserError(f"{ERR_EXPECTED}: constraints_json must be valid JSON")
     if not isinstance(parsed, list):
         raise gl.vm.UserError(f"{ERR_EXPECTED}: constraints_json must be a JSON array")
     if len(parsed) == 0 or len(parsed) > MAX_CONSTRAINTS:
