@@ -923,6 +923,11 @@ class Treaty(gl.Contract):
         def validator_fn(leader_result) -> bool:
             # Runners may pass either the wrapper or its decoded calldata.
             proposed = getattr(leader_result, "calldata", leader_result)
+            if isinstance(proposed, str):
+                try:
+                    proposed = json.loads(proposed)
+                except Exception:
+                    return False
             if not isinstance(proposed, dict):
                 return False
             if not valid_semantic_result(proposed, expected_groups, group_sizes):
