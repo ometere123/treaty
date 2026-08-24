@@ -599,6 +599,25 @@ def _deterministic_row(unit: dict, relation: int) -> dict:
             "b_indices": list(range(len(unit["b"]))) if relation in (TOPIC_CONFLICT, TOPIC_AMBIGUOUS) else []}
 
 
+def _deterministic_ambiguity(unit: dict) -> bool:
+    """Catch an explicit unresolved-unit declaration before model judgment.
+
+    A policy that names a measurement but explicitly supplies no conversion
+    rule is not safely comparable.  Treating that source-grounded condition as
+    AMBIGUOUS is deterministic, conservative, and keeps validator execution
+    identical without asking heterogeneous models to guess at units.
+    """
+    statements = [
+        str(item.get("statement", "")).lower()
+        for item in list(unit.get("a", [])) + list(unit.get("b", []))
+    ]
+    return any(
+        "no conversion rule" in statement
+        or "conversion rule is not provided" in statement
+        for statement in statements
+    )
+
+
 def assess_semantics_once(units: list[dict], role: str = "leader") -> dict:
     rows = []
     for unit in units:
@@ -606,6 +625,8 @@ def assess_semantics_once(units: list[dict], role: str = "leader") -> dict:
             relation = TOPIC_UNILATERAL_B
         elif not unit["b"]:
             relation = TOPIC_UNILATERAL_A
+        elif _deterministic_ambiguity(unit):
+            relation = TOPIC_AMBIGUOUS
         else:
             raw = gl.nondet.exec_prompt(build_unit_prompt(unit, role), response_format="json")
             relation = parse_unit_relation(raw, unit)
