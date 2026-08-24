@@ -22,22 +22,14 @@ TX_RE = re.compile(r"0x[0-9a-fA-F]{64}")
 DOMAIN = {
     "topics": [
         {"topic": "commercial.price", "group": "commercial-payment"},
-        {"topic": "identity.email", "group": "identity-data"},
-        {"topic": "identity.pii", "group": "identity-data"},
-        {"topic": "execution.delivery", "group": "execution"},
-        {"topic": "refund.failure", "group": "refund"},
     ],
     "dependencies": [],
 }
 BUYER = [
     {"topic": "commercial.price", "statement": "Total price must not exceed 50 USD."},
-    {"topic": "identity.pii", "statement": "Customer personally identifiable information must never be disclosed."},
-    {"topic": "refund.failure", "statement": "A full refund is required when execution never begins."},
 ]
 SELLER = [
     {"topic": "commercial.price", "statement": "Price must be between 40 USD and 45 USD."},
-    {"topic": "identity.email", "statement": "The service must operate without receiving customer PII."},
-    {"topic": "execution.delivery", "statement": "Delivery completes within 300 seconds."},
 ]
 INCOMPATIBLE = [
     {"topic": "commercial.price", "statement": "Price must be at least 60 USD."},
@@ -62,9 +54,8 @@ class Demo:
         print("+", " ".join(command), flush=True)
         result = subprocess.run(command, cwd=ROOT, text=True, capture_output=True, check=False)
         output = (result.stdout or "") + (result.stderr or "")
-        print(output, end="", flush=True)
         if result.returncode != 0:
-            raise RuntimeError(f"command failed: {' '.join(command)}")
+            raise RuntimeError(f"command failed: {' '.join(command)}\n{output[-4000:]}")
         return output
 
     def run(self, *args: str) -> str:
@@ -109,6 +100,12 @@ class Demo:
         self.write("incompatible assessment open", "open_assessment", [1, 1, 3, 1], self.alice)
         self.write("incompatible assessment resolve", "resolve_assessment", [2], self.alice)
         self.read("incompatible assessment", "get_assessment", [2], self.alice)
+        self.write("ambiguous policy", "create_policy", ["Bob Ambiguous", 1, 1, json.dumps(json.dumps([
+            {"topic": "commercial.price", "statement": "The price uses an amount with no conversion rule."},
+        ], separators=(",", ":")))], self.bob)
+        self.write("ambiguous assessment open", "open_assessment", [1, 1, 4, 1], self.alice)
+        self.write("ambiguous assessment resolve", "resolve_assessment", [3], self.alice)
+        self.read("ambiguous assessment", "get_assessment", [3], self.alice)
         self.write("successor proposal", "propose_treaty", [1, 0, 1], self.alice)
         self.read("parent while successor proposed", "get_treaty", [1], self.alice)
         self.write("successor ratification", "ratify_treaty", [2], self.bob)
@@ -127,6 +124,7 @@ class Demo:
                 "proposal": "PROPOSED",
                 "active_treaty": "ACTIVE",
                 "incompatible_assessment": "INCOMPATIBLE",
+                "ambiguous_assessment": "AMBIGUOUS",
                 "parent_after_successor": "SUPERSEDED",
                 "successor": "ACTIVE",
             },
