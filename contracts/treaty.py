@@ -343,6 +343,8 @@ def parse_domain_definition(raw: str) -> dict:
         parsed = raw
     else:
         text = str(raw).strip()
+        if text.startswith("b'") and text.endswith("'"):
+            text = text[2:-1]
         if len(text) == 0 or len(text) > MAX_CONSTRAINTS_JSON_LEN:
             raise gl.vm.UserError(f"{ERR_EXPECTED}: domain definition is too large")
         try:
