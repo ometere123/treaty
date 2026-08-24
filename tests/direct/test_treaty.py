@@ -3,8 +3,8 @@
 import json
 
 CONTRACT = "contracts/treaty.py"
-LEADER_PROMPT = r"You are a conservative satisfiability checker"
-VALIDATOR_PROMPT = r"You are a source-grounded validator"
+LEADER_PROMPT = r"LEADER PASS"
+VALIDATOR_PROMPT = r"INDEPENDENT VALIDATOR PASS"
 DOMAIN = json.dumps({"topics": [
     {"topic": "commercial.price", "group": "commercial-payment"},
     {"topic": "identity.email", "group": "identity-data"},
@@ -53,7 +53,7 @@ CONFLICT_SMALL = semantic([
 
 def mock_consensus(vm, leader=SAFE_COMPATIBLE, validator=None):
     vm.mock_llm(LEADER_PROMPT, leader)
-    vm.mock_llm(VALIDATOR_PROMPT, json.dumps({"valid": True}) if validator is None else validator)
+    vm.mock_llm(VALIDATOR_PROMPT, leader if validator is None else validator)
 
 
 def setup_domain(vm, deploy, owner):

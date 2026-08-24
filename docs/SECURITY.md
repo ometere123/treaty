@@ -8,11 +8,11 @@ The registry does not magically make semantic modeling truthful. Policy parties 
 
 ## Namespace and cross-topic semantics
 
-Policies may use only topics in their pinned domain version. Clauses are grouped by the domain’s canonical semantic group, so different keys in one group are compared together. A global bounded consistency pass sees the complete pinned policy sets and dependencies, allowing contradictions that span groups to produce `CONFLICT` or `AMBIGUOUS` rather than silently becoming unilateral.
+Policies may use only topics in their pinned domain version. Clauses are grouped by the domain’s canonical semantic group, so different keys in one group are compared together. Every declared dependency whose groups contain clauses becomes a separate bounded cross-group semantic unit, allowing relevant contradictions to produce `CONFLICT` or `AMBIGUOUS` without a giant all-policy prompt.
 
 ## LLM trust boundary
 
-The leader proposes only finite relation codes, global status, and source-clause index witnesses. The validator checks structure and independently source-grounds that exact proposal. Neither model can write state, invent an agreement, add an exception, choose owners, ratify, reject, expire, or supersede. No free-form explanation is consensus-critical.
+The leader proposes only a finite relation for one deterministic semantic unit. The validator independently reruns that unit over the same source and the contract compares the material relation. Group identity, unilateral classification, witness ranges, and final status are deterministic. Neither model can write state, invent an agreement, add an exception, choose owners, ratify, reject, expire, or supersede. No free-form explanation is consensus-critical.
 
 Policy text is adversarial input. Prompts explicitly mark it as data and forbid following embedded instructions, browsing, tool use, or hidden-context disclosure. Unsupported or unresolved meaning is fail-safe ambiguity; conflict dominates ambiguity.
 
@@ -26,7 +26,7 @@ Expiry must be future and no more than one year from proposal. Read methods enfo
 
 ## Resource bounds
 
-Names, domain topics, groups, dependencies, constraints, statements, and semantic groups have explicit finite limits. The complete source payload is measured before consensus and rejected above the prompt budget. There is no source slicing or silent truncation.
+Names, domain topics, groups, dependencies, constraints, statements, and semantic groups have explicit finite limits. Each complete semantic unit is measured before consensus and rejected above the prompt budget. Complete units may be evaluated separately; there is no source slicing or silent truncation.
 
 ## Other invariants
 

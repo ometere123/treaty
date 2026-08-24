@@ -52,8 +52,8 @@ def test_leader_invents_clause_index_fails(direct_vm, direct_deploy, direct_alic
     fake = json.loads(SAFE_COMPATIBLE)
     fake["groups"][0]["a_indices"] = [99]
     mock_consensus(direct_vm, json.dumps(fake))
-    contract.resolve_assessment(assessment_id)
-    assert direct_vm.run_validator() is False
+    with direct_vm.expect_revert():
+        contract.resolve_assessment(assessment_id)
 
 
 def test_leader_unsupported_relation_fails(direct_vm, direct_deploy, direct_alice, direct_bob):
@@ -168,7 +168,7 @@ def test_parent_must_be_active_for_successor(direct_vm, direct_deploy, direct_al
         contract.propose_treaty(assessment_id, 0, 999)
 
 
-def test_max_prompt_source_is_rejected_without_truncation(direct_vm, direct_deploy, direct_alice, direct_bob):
+def test_max_prompt_source_is_batched_without_truncation(direct_vm, direct_deploy, direct_alice, direct_bob):
     contract, domain_id = create_pair(direct_vm, direct_deploy, direct_alice, direct_bob)[0:2]
     large = json.dumps([
         {"topic": topic, "statement": "x" * 900}
@@ -179,5 +179,7 @@ def test_max_prompt_source_is_rejected_without_truncation(direct_vm, direct_depl
     with direct_vm.prank(direct_bob):
         b = contract.create_policy("large-b", domain_id, 1, large)
     assessment_id = contract.open_assessment(a, 1, b, 1)
-    with direct_vm.expect_revert("exceeds bounded prompt size"):
-        resolve(direct_vm, contract, assessment_id, json.dumps({"groups": [], "overall": "COMPATIBLE"}))
+    # Each complete semantic group is bounded independently. The source is
+    # never sliced, and these five complete units remain admissible.
+    resolve(direct_vm, contract, assessment_id, SAFE_COMPATIBLE)
+    assert contract.get_assessment(assessment_id)["status_name"] == "COMPATIBLE"

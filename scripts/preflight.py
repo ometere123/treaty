@@ -27,7 +27,7 @@ REQUIRED_SOURCE_MARKERS = [
     "class ITreaty",
     "gl.vm.run_nondet_unsafe",
     "assess_semantics_once",
-    "build_validation_prompt",
+    "build_unit_prompt",
     "class DomainVersion",
     "create_domain",
     "semantic_units",
@@ -89,8 +89,8 @@ def main() -> int:
             fail(f"unexpected money-moving surface: {forbidden}")
 
     checks += 1
-    if source.count("gl.nondet.exec_prompt") != 2:
-        fail("expected exactly two bounded semantic LLM call sites (leader and source-grounded validator)")
+    if source.count("gl.nondet.exec_prompt") != 1:
+        fail("expected one bounded semantic LLM call site reused by leader and independent validator")
 
     checks += 1
     if source.count("gl.vm.run_nondet_unsafe") != 1:
