@@ -45,10 +45,11 @@ INCOMPATIBLE = [
 
 
 class Demo:
-    def __init__(self, contract: str, alice: str, bob: str):
+    def __init__(self, contract: str, alice: str, bob: str, cli_command: list[str]):
         self.contract = contract
         self.alice = alice
         self.bob = bob
+        self.cli_command = cli_command
         self.account = None
         self.transactions = []
         self.reads = {}
@@ -57,7 +58,7 @@ class Demo:
         if account is not None and account != self.account:
             self.run("account", "use", account)
             self.account = account
-        command = ["genlayer", *args]
+        command = [*self.cli_command, *args]
         print("+", " ".join(command), flush=True)
         result = subprocess.run(command, cwd=ROOT, text=True, capture_output=True, check=False)
         output = (result.stdout or "") + (result.stderr or "")
@@ -93,9 +94,9 @@ class Demo:
     def execute(self) -> dict:
         self.run("network", "set", "studionet")
         self.run("account", "show")
-        self.write("domain creation", "create_domain", ["Agent Service", DOMAIN], self.alice)
-        self.write("Alice policy", "create_policy", ["Alice Buyer", 1, 1, BUYER], self.alice)
-        self.write("Bob policy", "create_policy", ["Bob Seller", 1, 1, SELLER], self.bob)
+        self.write("domain creation", "create_domain", ["Agent Service", json.dumps(json.dumps(DOMAIN, separators=(",", ":")))], self.alice)
+        self.write("Alice policy", "create_policy", ["Alice Buyer", 1, 1, json.dumps(json.dumps(BUYER, separators=(",", ":")))], self.alice)
+        self.write("Bob policy", "create_policy", ["Bob Seller", 1, 1, json.dumps(json.dumps(SELLER, separators=(",", ":")))], self.bob)
         self.write("compatible assessment open", "open_assessment", [1, 1, 2, 1], self.alice)
         self.write("compatible assessment resolve", "resolve_assessment", [1], self.alice)
         self.read("compatible assessment", "get_assessment", [1], self.alice)
@@ -104,7 +105,7 @@ class Demo:
         self.read("proposed treaty", "get_treaty", [1], self.alice)
         self.write("Bob ratification", "ratify_treaty", [1], self.bob)
         active = self.read("active treaty", "get_treaty", [1], self.bob)
-        self.write("incompatible policy", "create_policy", ["Bob Conflict", 1, 1, INCOMPATIBLE], self.bob)
+        self.write("incompatible policy", "create_policy", ["Bob Conflict", 1, 1, json.dumps(json.dumps(INCOMPATIBLE, separators=(",", ":")))], self.bob)
         self.write("incompatible assessment open", "open_assessment", [1, 1, 3, 1], self.alice)
         self.write("incompatible assessment resolve", "resolve_assessment", [2], self.alice)
         self.read("incompatible assessment", "get_assessment", [2], self.alice)
@@ -142,8 +143,9 @@ def main() -> int:
     parser.add_argument("--contract", required=True)
     parser.add_argument("--alice", default="termsmet-studionet-submitter")
     parser.add_argument("--bob", default="party_b")
+    parser.add_argument("--cli", nargs="+", default=["genlayer"])
     args = parser.parse_args()
-    Demo(args.contract, args.alice, args.bob).execute()
+    Demo(args.contract, args.alice, args.bob, args.cli).execute()
     return 0
 
 

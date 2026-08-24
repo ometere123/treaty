@@ -920,9 +920,14 @@ class Treaty(gl.Contract):
             return assess_semantics_once(domain_data, constraints_a, constraints_b, topic_groups)
 
         def validator_fn(leader_result) -> bool:
-            if not isinstance(leader_result, gl.vm.Return):
+            if isinstance(leader_result, gl.vm.Return):
+                proposed = leader_result.calldata
+            elif isinstance(leader_result, dict):
+                # Current StudioNet passes the bounded proposal directly;
+                # older runners wrap it in gl.vm.Return.
+                proposed = leader_result
+            else:
                 return False
-            proposed = leader_result.calldata
             if not valid_semantic_result(proposed, expected_groups, group_sizes):
                 return False
             try:
