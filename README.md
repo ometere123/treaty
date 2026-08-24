@@ -409,7 +409,7 @@ genvm-lint check contracts/treaty.py
 
 Treaty has no constructor arguments.
 
-The final committed source was freshly deployed to StudioNet at [`0x16238CD12aae247b8E985d63C317BC6cb18c57A4`](docs/DEPLOYMENT.md). Deployment `0x352cf0f047db56393328e2da3ebe6eca06fa17df9af6c8ef8002c14bbbf2e641` is explicitly `FINALIZED`, with `SUCCESS` execution and `MAJORITY_AGREE`. The final-source evidence includes a compatible assessment, reverse cache reuse, and an active treaty; the remaining lifecycle boundary is stated precisely in `docs/DEPLOYMENT.md`.
+The final committed source was freshly deployed to StudioNet at [`0x4f3710ea791458aBe1Fe1cE5D0bbBCc0CBdf098A`](docs/DEPLOYMENT.md). The deployment and complete compatible, incompatible, ambiguous, bilateral activation, cache, and supersession lifecycle are recorded with finalized receipts in `docs/DEPLOYMENT.md`.
 
 With the GenLayer CLI:
 

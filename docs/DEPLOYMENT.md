@@ -1,29 +1,53 @@
-# StudioNet deployment and lifecycle evidence
+# Final StudioNet Deployment Evidence
 
-## Final source deployment
-
-- Final source commit: `b1cfe0f`
-- Contract: `0x16238CD12aae247b8E985d63C317BC6cb18c57A4`
-- Network: StudioNet (`https://studio.genlayer.com/api`)
+- Final repository commit: `87b679dffea13640e75d23b52a6392b817724504`
+- Deployed source commit: `87b679dffea13640e75d23b52a6392b817724504`
+- Network: StudioNet
+- Contract: `0x4f3710ea791458aBe1Fe1cE5D0bbBCc0CBdf098A`
 - Deployer: `0xB5EcD6dDa36B370aca4af5E2005d8E2Ae89c6db2`
-- Deployment transaction: `0x352cf0f047db56393328e2da3ebe6eca06fa17df9af6c8ef8002c14bbbf2e641`
-- Final status: `FINALIZED`
-- Execution: `SUCCESS`
-- Consensus: `MAJORITY_AGREE`
+- Deployment tx: `0xa3ca4b5b7fbd0570dd028a2b702f61e46524af986a2acf8953926cb36409b47c`
+- Deployment status: `FINALIZED / SUCCESS / MAJORITY_AGREE`
 
-## Verified final-source lifecycle evidence
+## Lifecycle receipts
 
-The following writes were executed against the address above with two independent StudioNet accounts:
+The two policy owners were independent accounts: Alice `0xB5EcD6dDa36B370aca4af5E2005d8E2Ae89c6db2` and Bob `0xA7EeAE0E93793e3146Cb14b0700251B8b0ebadfb`.
 
-- Domain creation: `0x2716ed8719a3ff86f149639b7813344b1c2a237af51644a5d14122eb262f80dd`
-- Alice policy: `0xf8a04b31d9b3547d7adb7a2b610eeda60ccb5d82bda5bdad70eb2f879ce7479a`
-- Bob policy: `0x0120298a556f01380d1943629514f5294281d7c4c0e62757af552df9556f72ec`
-- Assessment open: `0x14bcaebab4201897987bb08fde60603b7361894dd410530bfd1320802ce16929`
-- Compatible resolution: `0xabd96ddadc9b90182e45bac790f467a160e5f23ed3e61bee4305f6d099e3279a`
-- Reverse-order cache open: `0x57fddfe83c301698db0f853834c337b4fcd7aa4c9911e5be0779fc239925d78b`
+- Domain creation: `0x6e7391fae167633f19986242a54932ffdeea5911eebc2469ff96faac7267081c`
+- Alice policy: `0x2eae104554b8683d4c6c7eadbdf8d7e099ef1e5b98215b3e12169afecb606df8`
+- Bob policy: `0xb43ce8b22599c281b41330ad0f940aefb80b8f26fa72f1b34fc95b14cc7f802c`
 
-The final compatible read returned `COMPATIBLE`; reverse cache returned assessment ID `1`. The final treaty proposal was `0xca07ec3cc605b41754edd320a52d12d81455df1f87d827795a81b2808bc470f0`, and Bob’s independent ratification was `0x9d5aa0dbd68c4734a101d6c77a88eafcf45b28840634904ff24171b761d35523`. The final read returned treaty `1` as `ACTIVE`, with agreement hash `815647de95e1edee728101da9fe0957e40b968c94c15e20367ed1399a6657cb6` and `effective_active=true`.
+Compatible assessment 1:
 
-## Evidence boundary
+- Open: `0x0b2f68f04bf5603fbe21fc2930dfcd8dca305a891d3e3f6e71d9d746be8b6b23`
+- Resolve: `0xbffcecef7e0e4e0180a59dde2a47ca12c2b0e6ff48ec6001b72644e3ea00f0ae`
+- Result: `FINALIZED / SUCCESS / MAJORITY_AGREE`, `COMPATIBLE`
+- Reverse `get_cached_assessment(2,1,1,1)` returned assessment `1`.
 
-Earlier deployments and the earlier `MAJORITY_DISAGREE` semantic-resolution attempt are historical only. The final-source incompatible, ambiguous, supersession, and pause lifecycle cases were not completed in this run because the CLI keychain stopped exposing the existing account keys and requested an unavailable password. No substitute or fabricated evidence is claimed.
+Incompatible assessment 2:
+
+- Open: `0x48219711ef5b7494322ef1b4caed2e89a3bc7df48685e963ff4d08127d6955a9`
+- Resolve: `0xe1e2f3849754053745cccc1cd9dc8186b3c3b1626d7b4b4d0281e18e275154a7`
+- Result: `FINALIZED / SUCCESS / MAJORITY_AGREE`, `INCOMPATIBLE`
+
+Ambiguous assessment 3:
+
+- Open: `0x4f45555a1fba88727732f4c4680fbf26ab83821df0efc47e10ef31f47da761a6`
+- Resolve: `0x22d8d687cf73c1c7449e98feee11da9a37b08e47d26dcbc3c679c8bc0a3cae88`
+- Result: `FINALIZED / SUCCESS / MAJORITY_AGREE`, `AMBIGUOUS`
+
+Treaty 1:
+
+- Proposal: `0xfa5f6ce42e9a08ab79231ac0fce3b211daef45717a92b905da75a1570c6d180f`; read showed `PROPOSED`, Alice ratified, Bob not ratified.
+- Bob ratification: `0xd72bf944b7e454cf97f5037174abebce56f874e1dffc04361feba3575bd856db`
+- Final state: `ACTIVE`; agreement hash `57d1ff4125370b18c6483746e716636f578f71d2810d80f366b94e58501d6764`.
+- `is_treaty_active(1, wrong-agreement-hash)` returned `false`.
+
+Supersession:
+
+- Successor proposal: `0x303ff394325f266e445bed65d839de3b7da428a6fad16dd840f51fc3d03e4ccd`
+- Bob ratification: `0x12615a264e548a6daf86cede271790cd29a914394d45e24904ccccb237b60e02`
+- Parent `1` was `ACTIVE` after proposal and became `SUPERSEDED` only after the second ratification.
+- Successor `2` became `ACTIVE`.
+- Competing child attempt: `0xa36d90b0a95c3c989328d556cf21ead1351365fcde0254c04af513bc55a7dafd`; finalized with execution error `EXPECTED: parent treaty must be active`.
+
+Machine-readable evidence is in [`artifacts/studionet_lifecycle.json`](../artifacts/studionet_lifecycle.json).

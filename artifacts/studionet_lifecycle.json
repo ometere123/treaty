@@ -1,33 +1,16 @@
 {
   "network": "studionet",
-  "source_commit": "b1cfe0f",
-  "contract": "0x16238CD12aae247b8E985d63C317BC6cb18c57A4",
+  "final_repository_commit": "87b679dffea13640e75d23b52a6392b817724504",
+  "deployed_source_commit": "87b679dffea13640e75d23b52a6392b817724504",
+  "contract_address": "0x4f3710ea791458aBe1Fe1cE5D0bbBCc0CBdf098A",
   "deployer": "0xB5EcD6dDa36B370aca4af5E2005d8E2Ae89c6db2",
-  "deployment": {
-    "tx": "0x352cf0f047db56393328e2da3ebe6eca06fa17df9af6c8ef8002c14bbbf2e641",
-    "status": "FINALIZED",
-    "execution": "SUCCESS",
-    "consensus": "MAJORITY_AGREE"
-  },
-  "verification": {
-    "direct_mode": "40 passed, 0 failed",
-    "preflight": "45/45",
-    "genvm_lint": "PASS (I200 informational newer-runner notice)",
-    "compatible_assessment": {
-      "tx": "0xabd96ddadc9b90182e45bac790f467a160e5f23ed3e61bee4305f6d099e3279a",
-      "status": "COMPATIBLE"
-    },
-    "reverse_cache": {
-      "tx": "0x57fddfe83c301698db0f853834c337b4fcd7aa4c9911e5be0779fc239925d78b",
-      "cached_assessment_id": 1
-    },
-    "active_treaty": {
-      "proposal_tx": "0xca07ec3cc605b41754edd320a52d12d81455df1f87d827795a81b2808bc470f0",
-      "ratification_tx": "0x9d5aa0dbd68c4734a101d6c77a88eafcf45b28840634904ff24171b761d35523",
-      "treaty_id": 1,
-      "status": "ACTIVE",
-      "agreement_hash": "815647de95e1edee728101da9fe0957e40b968c94c15e20367ed1399a6657cb6"
-    }
-  },
-  "not_claimed": ["final-source incompatible assessment", "final-source ambiguous assessment", "supersession", "pause boundary"]
+  "deployment": {"tx": "0xa3ca4b5b7fbd0570dd028a2b702f61e46524af986a2acf8953926cb36409b47c", "status": "FINALIZED", "execution": "SUCCESS", "consensus": "MAJORITY_AGREE"},
+  "tooling": {"direct_mode": "45 passed, 0 failed", "preflight": "45/45", "genvm_lint": "PASS", "ci_run": "https://github.com/ometere123/treaty/actions/runs/32724825257", "ci_status": "PASS", "ci_direct_runtime_behavior": "executed successfully"},
+  "accounts": {"alice": "0xB5EcD6dDa36B370aca4af5E2005d8E2Ae89c6db2", "bob": "0xA7EeAE0E93793e3146Cb14b0700251B8b0ebadfb"},
+  "compatible": {"open_tx": "0x0b2f68f04bf5603fbe21fc2930dfcd8dca305a891d3e3f6e71d9d746be8b6b23", "resolve_tx": "0xbffcecef7e0e4e0180a59dde2a47ca12c2b0e6ff48ec6001b72644e3ea00f0ae", "status": "FINALIZED / SUCCESS / MAJORITY_AGREE", "result": "COMPATIBLE", "assessment_id": 1},
+  "incompatible": {"open_tx": "0x48219711ef5b7494322ef1b4caed2e89a3bc7df48685e963ff4d08127d6955a9", "resolve_tx": "0xe1e2f3849754053745cccc1cd9dc8186b3c3b1626d7b4b4d0281e18e275154a7", "status": "FINALIZED / SUCCESS / MAJORITY_AGREE", "result": "INCOMPATIBLE", "assessment_id": 2},
+  "ambiguous": {"open_tx": "0x4f45555a1fba88727732f4c4680fbf26ab83821df0efc47e10ef31f47da761a6", "resolve_tx": "0x22d8d687cf73c1c7449e98feee11da9a37b08e47d26dcbc3c679c8bc0a3cae88", "status": "FINALIZED / SUCCESS / MAJORITY_AGREE", "result": "AMBIGUOUS", "assessment_id": 3},
+  "reverse_cache": {"read": "get_cached_assessment(2, 1, 1, 1)", "assessment_id": 1, "same_as_original": true},
+  "active_treaty": {"proposal_tx": "0xfa5f6ce42e9a08ab79231ac0fce3b211daef45717a92b905da75a1570c6d180f", "ratification_tx": "0xd72bf944b7e454cf97f5037174abebce56f874e1dffc04361feba3575bd856db", "treaty_id": 1, "agreement_hash": "57d1ff4125370b18c6483746e716636f578f71d2810d80f366b94e58501d6764", "status": "ACTIVE", "wrong_hash_read": false},
+  "supersession": {"parent": 1, "successor": 2, "proposal_tx": "0x303ff394325f266e445bed65d839de3b7da428a6fad16dd840f51fc3d03e4ccd", "ratification_tx": "0x12615a264e548a6daf86cede271790cd29a914394d45e24904ccccb237b60e02", "parent_final_status": "SUPERSEDED", "successor_final_status": "ACTIVE", "competing_child_tx": "0xa36d90b0a95c3c989328d556cf21ead1351365fcde0254c04af513bc55a7dafd", "competing_child_final_status": "FINALIZED / ERROR / parent treaty must be active"}
 }
