@@ -144,4 +144,4 @@ treaty.is_treaty_active(treaty_id, expected_agreement_hash)
 
 The repository includes `scripts/deploy_studionet.py`, which uses the active GenLayer CLI account and does not handle private keys or passwords itself.
 
-The verified StudioNet instance is `0x3bBC68Fb2863EF1a362298d6d6941df1506418BC`. Deployment transaction `0xfed2b8183d687bd9c1bc5de10f480b921f693c396e1ee58fac86e82f4f046a1f` has receipt status `0x1`, GenVM execution `SUCCESS`, and consensus result `MAJORITY_AGREE`. Full evidence and the truthful lifecycle limitation are in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
+The final committed StudioNet instance is `0xd11310Fd37C99700075bA0F49870730cb128e0b6`. Deployment transaction `0x03dd39eee8cd53a5b8be9e60fe673e7489253b28ff34407fe25d363989295718` is explicitly `FINALIZED`, with `SUCCESS` execution and `MAJORITY_AGREE`. Full evidence and the reproducible live semantic-resolution limitation are in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
