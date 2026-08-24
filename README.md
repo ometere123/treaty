@@ -96,7 +96,7 @@ share one assessment cache entry.
 
 For topics that appear in only one policy, Treaty deterministically records a unilateral hard constraint. Absence of a topic means "no additional restriction from this policy"; it is not treated as an implied permission.
 
-The leader proposes bounded semantic-group relations and a global result. The validator receives the same immutable domain and policy source plus that proposal and source-groundedly validates it; it does not merely check JSON shape or silently regenerate an arbitrary second answer.
+The leader proposes one bounded relation per bilateral group, dependency, or declared same-policy consistency unit. The validator independently derives the same relation from the same immutable source; it does not merely check JSON shape. Unilateral groups are classified deterministically from source cardinality and never by an LLM.
 
 The assessment becomes:
 
@@ -185,7 +185,7 @@ immutable versioned domain vocabulary
           |
           +---- canonical semantic-group alignment
           |
-          +---- global cross-group consistency pass
+          +---- declared dependency and self-consistency units
           |
           +---- topic in both
                     |

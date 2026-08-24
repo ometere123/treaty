@@ -8,50 +8,26 @@ from test_treaty import (
 )
 
 
-def test_leader_malformed_result_fails(direct_vm, direct_deploy, direct_alice, direct_bob):
+def test_leader_malformed_relation_fails(direct_vm, direct_deploy, direct_alice, direct_bob):
     contract, _, a, b = create_pair(direct_vm, direct_deploy, direct_alice, direct_bob)
     assessment_id = contract.open_assessment(a, 1, b, 1)
-    mock_consensus(direct_vm, json.dumps({"groups": []}))
+    mock_consensus(direct_vm, json.dumps({"wrong": "shape"}))
     with direct_vm.expect_revert():
         contract.resolve_assessment(assessment_id)
 
 
-def test_leader_invents_group_fails(direct_vm, direct_deploy, direct_alice, direct_bob):
+def test_bilateral_leader_unilateral_a_fails(direct_vm, direct_deploy, direct_alice, direct_bob):
     contract, _, a, b = create_pair(direct_vm, direct_deploy, direct_alice, direct_bob)
     assessment_id = contract.open_assessment(a, 1, b, 1)
-    fake = json.loads(SAFE_COMPATIBLE)
-    fake["groups"][0]["group"] = "invented"
-    mock_consensus(direct_vm, json.dumps(fake))
+    mock_consensus(direct_vm, json.dumps({"relation": "UNILATERAL_A"}))
     with direct_vm.expect_revert():
         contract.resolve_assessment(assessment_id)
 
 
-def test_leader_omits_group_fails(direct_vm, direct_deploy, direct_alice, direct_bob):
+def test_bilateral_leader_unilateral_b_fails(direct_vm, direct_deploy, direct_alice, direct_bob):
     contract, _, a, b = create_pair(direct_vm, direct_deploy, direct_alice, direct_bob)
     assessment_id = contract.open_assessment(a, 1, b, 1)
-    fake = json.loads(SAFE_COMPATIBLE)
-    fake["groups"] = fake["groups"][:-1]
-    mock_consensus(direct_vm, json.dumps(fake))
-    with direct_vm.expect_revert():
-        contract.resolve_assessment(assessment_id)
-
-
-def test_leader_reorders_groups_fails(direct_vm, direct_deploy, direct_alice, direct_bob):
-    contract, _, a, b = create_pair(direct_vm, direct_deploy, direct_alice, direct_bob)
-    assessment_id = contract.open_assessment(a, 1, b, 1)
-    fake = json.loads(SAFE_COMPATIBLE)
-    fake["groups"][0], fake["groups"][1] = fake["groups"][1], fake["groups"][0]
-    mock_consensus(direct_vm, json.dumps(fake))
-    with direct_vm.expect_revert():
-        contract.resolve_assessment(assessment_id)
-
-
-def test_leader_invents_clause_index_fails(direct_vm, direct_deploy, direct_alice, direct_bob):
-    contract, _, a, b = create_pair(direct_vm, direct_deploy, direct_alice, direct_bob)
-    assessment_id = contract.open_assessment(a, 1, b, 1)
-    fake = json.loads(SAFE_COMPATIBLE)
-    fake["groups"][0]["a_indices"] = [99]
-    mock_consensus(direct_vm, json.dumps(fake))
+    mock_consensus(direct_vm, json.dumps({"relation": "UNILATERAL_B"}))
     with direct_vm.expect_revert():
         contract.resolve_assessment(assessment_id)
 
@@ -59,9 +35,7 @@ def test_leader_invents_clause_index_fails(direct_vm, direct_deploy, direct_alic
 def test_leader_unsupported_relation_fails(direct_vm, direct_deploy, direct_alice, direct_bob):
     contract, _, a, b = create_pair(direct_vm, direct_deploy, direct_alice, direct_bob)
     assessment_id = contract.open_assessment(a, 1, b, 1)
-    fake = json.loads(SAFE_COMPATIBLE)
-    fake["groups"][0]["relation"] = "NEGOTIATE"
-    mock_consensus(direct_vm, json.dumps(fake))
+    mock_consensus(direct_vm, json.dumps({"relation": "NEGOTIATE"}))
     with direct_vm.expect_revert():
         contract.resolve_assessment(assessment_id)
 
@@ -181,5 +155,8 @@ def test_max_prompt_source_is_batched_without_truncation(direct_vm, direct_deplo
     assessment_id = contract.open_assessment(a, 1, b, 1)
     # Each complete semantic group is bounded independently. The source is
     # never sliced, and these five complete units remain admissible.
-    resolve(direct_vm, contract, assessment_id, SAFE_COMPATIBLE)
+    resolve(direct_vm, contract, assessment_id, semantic([
+        {"group": group, "relation": "COMPATIBLE"}
+        for group in ("commercial-payment", "execution", "identity-data", "refund")
+    ]))
     assert contract.get_assessment(assessment_id)["status_name"] == "COMPATIBLE"

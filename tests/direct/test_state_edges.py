@@ -47,12 +47,10 @@ def test_unknown_policy_version_reverts(direct_vm, direct_deploy, direct_alice):
 def test_ambiguous_assessment_cannot_be_proposed(direct_vm, direct_deploy, direct_alice, direct_bob):
     contract, _, a, b = create_pair(direct_vm, direct_deploy, direct_alice, direct_bob)
     assessment_id = contract.open_assessment(a, 1, b, 1)
-    ambiguous = json.dumps({"groups": [
-        {"group": "commercial-payment", "relation": "AMBIGUOUS", "a_indices": [0], "b_indices": [0]},
-        {"group": "execution", "relation": "UNILATERAL_B", "a_indices": [], "b_indices": []},
-        {"group": "identity-data", "relation": "AMBIGUOUS", "a_indices": [0], "b_indices": [0]},
-        {"group": "refund", "relation": "UNILATERAL_A", "a_indices": [], "b_indices": []},
-    ], "overall": "AMBIGUOUS"})
+    ambiguous = json.dumps({"relations": {
+        "commercial-payment": "AMBIGUOUS",
+        "identity-data": "AMBIGUOUS",
+    }, "overall": "AMBIGUOUS"})
     resolve(direct_vm, contract, assessment_id, ambiguous)
     assert contract.get_assessment(assessment_id)["status_name"] == "AMBIGUOUS"
     with direct_vm.expect_revert("only compatible assessments"):

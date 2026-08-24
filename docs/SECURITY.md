@@ -6,13 +6,15 @@ A domain creator publishes an immutable vocabulary and semantic grouping. The co
 
 The registry does not magically make semantic modeling truthful. Policy parties must trust that the selected domain creator mapped related concepts into appropriate groups. The benefit is that this trust is explicit, versioned, inspectable, and shared rather than hidden in arbitrary caller-selected topic strings. A malicious domain author can still design a poor vocabulary; parties should select reputable domains and pin the exact domain hash.
 
-## Namespace and cross-topic semantics
+## Namespace, cross-topic, and self-policy semantics
 
 Policies may use only topics in their pinned domain version. Clauses are grouped by the domain’s canonical semantic group, so different keys in one group are compared together. Every declared dependency whose groups contain clauses becomes a separate bounded cross-group semantic unit, allowing relevant contradictions to produce `CONFLICT` or `AMBIGUOUS` without a giant all-policy prompt.
 
+The same dependency graph is applied within each individual policy. When both dependent groups contain clauses in one policy, Treaty creates a bounded self-consistency unit. This means a policy that contradicts itself can never be certified compatible merely because the other policy is silent. No self-check is created for unrelated clauses without a declared dependency.
+
 ## LLM trust boundary
 
-The leader proposes only a finite relation for one deterministic semantic unit. The validator independently reruns that unit over the same source and the contract compares the material relation. Group identity, unilateral classification, witness ranges, and final status are deterministic. Neither model can write state, invent an agreement, add an exception, choose owners, ratify, reject, expire, or supersede. No free-form explanation is consensus-critical.
+The leader proposes only a finite relation for one deterministic semantic unit. The validator independently reruns that unit over the same source and the contract compares the material relation. A bilateral/self model may return only `COMPATIBLE`, `CONFLICT`, or `AMBIGUOUS`; unilateral labels are deterministic contract outputs only. Group identity, unilateral classification, witness ranges, and final status are deterministic. Neither model can write state, invent an agreement, add an exception, choose owners, ratify, reject, expire, or supersede. No free-form explanation is consensus-critical.
 
 Policy text is adversarial input. Prompts explicitly mark it as data and forbid following embedded instructions, browsing, tool use, or hidden-context disclosure. Unsupported or unresolved meaning is fail-safe ambiguity; conflict dominates ambiguity.
 

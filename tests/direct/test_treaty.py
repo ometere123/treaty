@@ -1,6 +1,7 @@
 """Direct-mode protocol tests for Treaty."""
 
 import json
+import re
 
 CONTRACT = "contracts/treaty.py"
 LEADER_PROMPT = r"LEADER PASS"
@@ -29,7 +30,14 @@ B_CONFLICT = json.dumps([
 
 
 def semantic(groups, overall="COMPATIBLE"):
-    return json.dumps({"groups": groups, "overall": overall})
+    return json.dumps({
+        "relations": {
+            str(row["group"]): str(row["relation"])
+            for row in groups
+            if str(row["relation"]) not in ("UNILATERAL_A", "UNILATERAL_B")
+        },
+        "overall": overall,
+    })
 
 
 SAFE_COMPATIBLE = semantic([
@@ -52,8 +60,29 @@ CONFLICT_SMALL = semantic([
 
 
 def mock_consensus(vm, leader=SAFE_COMPATIBLE, validator=None):
-    vm.mock_llm(LEADER_PROMPT, leader)
-    vm.mock_llm(VALIDATOR_PROMPT, leader if validator is None else validator)
+    def register(pass_prompt, value):
+        try:
+            spec = json.loads(value)
+        except Exception:
+            vm.mock_llm(pass_prompt, value)
+            return
+        relations = spec.get("relations") if isinstance(spec, dict) else None
+        if not isinstance(relations, dict):
+            vm.mock_llm(pass_prompt, value)
+            return
+        for identity, relation in relations.items():
+            if str(identity).startswith("self:"):
+                identity_pattern = '"kind":"self"'
+            elif str(identity).startswith("dependency:"):
+                identity_pattern = '"kind":"dependency"'
+            else:
+                identity_pattern = re.escape(str(identity).split("<->")[0]).replace(r'\-', '-')
+            vm.mock_llm(
+                rf'(?s){pass_prompt}.*{identity_pattern}',
+                json.dumps({"relation": relation}),
+            )
+    register(LEADER_PROMPT, leader)
+    register(VALIDATOR_PROMPT, leader if validator is None else validator)
 
 
 def setup_domain(vm, deploy, owner):

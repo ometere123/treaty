@@ -2,11 +2,11 @@
 
 ## Reviewer summary
 
-Treaty is a reusable GenLayer primitive for protocol-level compatibility and bilateral consent between independent autonomous systems. A versioned domain vocabulary closes topic-key evasion; immutable policy versions are grouped into semantic units; GenLayer consensus produces a bounded compatibility receipt with a global cross-group safety result; and only the two policy owners can activate a treaty.
+Treaty is a reusable GenLayer primitive for protocol-level compatibility and bilateral consent between independent autonomous systems. A versioned domain vocabulary closes topic-key evasion; immutable policy versions are evaluated through bounded group, dependency, and same-policy consistency units; GenLayer consensus produces a bounded compatibility receipt; and only the two policy owners can activate a treaty.
 
 GenLayer matters because natural-language satisfiability cannot be fully reduced to ordinary deterministic contract logic, while neither policy owner should unilaterally interpret both sides. Treaty is not a thin LLM wrapper: the contract owns domain/version hashes, policy ownership, cache identity, source pinning, assessment state, expiry, consent, rejection, and supersession. The LLM only evaluates bounded compatibility claims.
 
-The exact adversarial proof is in `tests/direct/test_treaty_hardening.py`: malformed, reordered, invented-group, invented-witness, prompt-injection, validator-rejection, and payload-boundary cases are covered. Local proof is 40 Direct Mode tests, 45 deterministic preflight checks, and a passing GenVM lint. Live lifecycle evidence is recorded in `docs/DEPLOYMENT.md`; only claims backed by finalized receipts belong there.
+The exact adversarial proof is in `tests/direct/`: malformed relation, bilateral unilateral-enum, prompt-injection, validator-rejection, self-policy contradiction, and payload-boundary cases are covered. Local proof is 45 Direct Mode tests, 45 deterministic preflight checks, and a passing GenVM lint. Live lifecycle evidence is recorded in `docs/DEPLOYMENT.md`; only claims backed by finalized receipts belong there.
 
 ## Category
 
@@ -42,7 +42,7 @@ This separation lets one expensive semantic assessment support multiple downstre
 
 ## Consensus logic
 
-Only exact-topic overlaps require nondeterministic reasoning.
+Only bilateral semantic units and declared interacting groups require nondeterministic reasoning.
 
 The leader classifies each overlap into one bounded relation:
 
@@ -56,12 +56,11 @@ Validators independently rerun the same classification from the immutable source
 
 The validator checks:
 
-1. leader result is the expected list shape
-2. result count is exact
-3. every topic is exact and in deterministic order
-4. every relation is one of the finite allowed codes
-5. validator independently executes the same semantic task
-6. every validator relation equals the proposed relation
+1. every model response is exactly relation-only JSON
+2. bilateral/self responses use only the three semantic relations
+3. unilateral results arise only from deterministic source cardinality
+4. validator independently executes the same semantic task
+5. every validator relation equals the proposed relation
 
 The final assessment status is deterministic:
 

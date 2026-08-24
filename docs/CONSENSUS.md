@@ -10,13 +10,15 @@ Before consensus, deterministic code groups all clauses by their canonical seman
 
 ## Leader proposal
 
-For each bilateral group or relevant dependency unit, the leader receives only that unit’s immutable source and returns one bounded relation:
+For each bilateral group, relevant dependency unit, or declared same-policy dependency unit, the leader receives only that unit’s immutable source and returns one bounded relation:
 
 ```json
 {"relation":"CONFLICT"}
 ```
 
-Unilateral groups never enter consensus: deterministic source cardinality produces `UNILATERAL_A` or `UNILATERAL_B`. Nondeterministic units allow only `COMPATIBLE`, `CONFLICT`, or `AMBIGUOUS`. Stored group identities and witness ranges are reconstructed deterministically from the immutable source, never generated as prose.
+Unilateral groups never enter consensus: deterministic source cardinality produces `UNILATERAL_A` or `UNILATERAL_B`. A bilateral or self-consistency model response accepts only `COMPATIBLE`, `CONFLICT`, or `AMBIGUOUS`; unilateral enums are rejected. Stored group identities and witness ranges are reconstructed deterministically from the immutable source, never generated as prose.
+
+For every declared dependency with clauses on both sides of one policy, Treaty also evaluates a bounded internal-policy unit. A self `CONFLICT` makes the assessment `INCOMPATIBLE`; a self `AMBIGUOUS` makes it `AMBIGUOUS` unless another unit proves conflict. Unrelated unilateral clauses are not self-evaluated.
 
 ## Validator behavior
 
@@ -38,7 +40,7 @@ Conflict dominates ambiguity. Only `COMPATIBLE` assessments can be proposed as t
 
 ## Failure behavior and bounds
 
-Malformed leader output, validator exceptions, invalid witnesses, or validator disagreement cannot settle state. Source size is checked before nondeterministic execution and is rejected when it exceeds the bounded prompt budget. Treaty never slices or silently truncates semantic source material.
+Malformed leader output, validator exceptions, unsupported unilateral model enums, or validator disagreement cannot settle state. Source size is checked before nondeterministic execution and is rejected when it exceeds the bounded prompt budget. Treaty never slices or silently truncates semantic source material.
 
 ## Cache safety
 
